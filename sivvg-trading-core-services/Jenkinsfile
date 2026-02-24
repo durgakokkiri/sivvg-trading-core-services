@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                bat 'mvnw.cmd clean install -DskipTests'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'mvnw.cmd test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                bat 'mvnw.cmd package'
+            }
+        }
+    }
+}
