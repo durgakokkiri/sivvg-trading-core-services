@@ -14,7 +14,11 @@ pipeline {
         stage('Run') {
             steps {
                 dir('sivvg-trading-core-services') {
-                    bat 'java -jar target/*.jar'
+                    bat '''
+                    for %%i in (target\\*.jar) do (
+                        java -jar %%i
+                    )
+                    '''
                 }
             }
         }
