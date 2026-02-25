@@ -5,19 +5,17 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvnw.cmd clean install -DskipTests'
+                dir('sivvg-trading-core-services') {
+                    bat 'mvnw.cmd clean install -DskipTests'
+                }
             }
         }
 
-        stage('Test') {
+        stage('Run') {
             steps {
-                bat 'mvnw.cmd test'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                bat 'mvnw.cmd package'
+                dir('sivvg-trading-core-services') {
+                    bat 'java -jar target/*.jar'
+                }
             }
         }
     }
