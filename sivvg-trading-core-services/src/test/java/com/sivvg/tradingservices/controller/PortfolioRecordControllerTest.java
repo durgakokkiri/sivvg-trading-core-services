@@ -20,10 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,22 +33,22 @@ import com.sivvg.tradingservices.model.PortfolioMonthlyUserSummary;
 import com.sivvg.tradingservices.service.PortfolioRecordService;
 
 @WebMvcTest(PortfolioRecordController.class)
-@AutoConfigureMockMvc(addFilters = false)   // 🔥 disable JWT / filters
+@AutoConfigureMockMvc(addFilters = false) // 🔥 disable JWT / filters
 @Import(TestSecurityConfig.class)
 public class PortfolioRecordControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @MockBean
-    private PortfolioRecordService recordService;
+	@MockitoBean
+	private PortfolioRecordService recordService;
 
-    // ---------- DAILY ----------
+	// ---------- DAILY ----------
 
-    @Test
+	@Test
     @WithMockUser(authorities = "ROLE_USER")
     public void getAllDaily_success() throws Exception {
 
@@ -59,7 +59,7 @@ public class PortfolioRecordControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
+	@Test
     @WithMockUser(authorities = "ROLE_USER")
     public void getDailyById_success() throws Exception {
 
@@ -70,51 +70,44 @@ public class PortfolioRecordControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    public void updateDaily_success() throws Exception {
+	@Test
+	@WithMockUser(authorities = "ROLE_USER")
+	public void updateDaily_success() throws Exception {
 
-        PortfolioDailyRecord record = new PortfolioDailyRecord();
+		PortfolioDailyRecord record = new PortfolioDailyRecord();
 
-        when(recordService.updateDailyRecord(eq(1L), any()))
-                .thenReturn(record);
+		when(recordService.updateDailyRecord(eq(1L), any())).thenReturn(record);
 
-        mockMvc.perform(put("/api/v1/records/daily/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(record)))
-                .andExpect(status().isOk());
-    }
+		mockMvc.perform(put("/api/v1/records/daily/1").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(record))).andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    public void patchDaily_success() throws Exception {
+	@Test
+	@WithMockUser(authorities = "ROLE_USER")
+	public void patchDaily_success() throws Exception {
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("profit", 1000);
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("profit", 1000);
 
-        when(recordService.patchDailyRecord(eq(1L), any()))
-                .thenReturn(new PortfolioDailyRecord());
+		when(recordService.patchDailyRecord(eq(1L), any())).thenReturn(new PortfolioDailyRecord());
 
-        mockMvc.perform(patch("/api/v1/records/daily/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updates)))
-                .andExpect(status().isOk());
-    }
+		mockMvc.perform(patch("/api/v1/records/daily/1").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updates))).andExpect(status().isOk());
+	}
 
-    @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    public void deleteDaily_success() throws Exception {
+	@Test
+	@WithMockUser(authorities = "ROLE_USER")
+	public void deleteDaily_success() throws Exception {
 
-        doNothing().when(recordService).deleteDailyRecord(1L);
+		doNothing().when(recordService).deleteDailyRecord(1L);
 
-        mockMvc.perform(delete("/api/v1/records/daily/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Daily record deleted successfully"));
-    }
+		mockMvc.perform(delete("/api/v1/records/daily/1")).andExpect(status().isOk())
+				.andExpect(content().string("Daily record deleted successfully"));
+	}
 
-    // ---------- MONTHLY ----------
+	// ---------- MONTHLY ----------
 
-    @Test
+	@Test
     @WithMockUser(authorities = "ROLE_USER")
     public void getMonthly_success() throws Exception {
 
@@ -125,14 +118,13 @@ public class PortfolioRecordControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    public  void deleteMonthly_success() throws Exception {
+	@Test
+	@WithMockUser(authorities = "ROLE_USER")
+	public void deleteMonthly_success() throws Exception {
 
-        doNothing().when(recordService).deleteMonthlySummary(1L);
+		doNothing().when(recordService).deleteMonthlySummary(1L);
 
-        mockMvc.perform(delete("/api/v1/records/monthly/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Monthly summary deleted successfully"));
-    }
+		mockMvc.perform(delete("/api/v1/records/monthly/1")).andExpect(status().isOk())
+				.andExpect(content().string("Monthly summary deleted successfully"));
+	}
 }

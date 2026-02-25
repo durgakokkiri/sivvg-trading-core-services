@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.sivvg.tradingservices.configuration.TestSecurityConfig;
@@ -32,10 +33,10 @@ public class PerformanceControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private PerformanceService service;
 
-    @MockBean
+    @MockitoBean
     private DailyTipHistoryRepository repo;
 
     // ✅ ALL DATA (NO FILTER)

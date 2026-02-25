@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,55 +26,45 @@ import com.sivvg.tradingservices.playload.ContactUSRequestDto;
 import com.sivvg.tradingservices.service.ContactUSService;
 
 @WebMvcTest(ContactUSController.class)
-@AutoConfigureMockMvc(addFilters = false)   
+@AutoConfigureMockMvc(addFilters = false)
 @Import(TestSecurityConfig.class)
 public class ContactUSControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @MockBean
-    private ContactUSService contactService;
+	@MockitoBean
+	private ContactUSService contactService;
 
-    // ✅ SUCCESS CASE
-    @Test
-    @WithMockUser(username = "user123", roles = "USER")
-    public  void createContact_success() throws Exception {
+	// ✅ SUCCESS CASE
+	@Test
+	@WithMockUser(username = "user123", roles = "USER")
+	public void createContact_success() throws Exception {
 
-        ContactUSRequestDto dto =
-                new ContactUSRequestDto("Need help with trading app", "EMAIL");
+		ContactUSRequestDto dto = new ContactUSRequestDto("Need help with trading app", "EMAIL");
 
-        doNothing().when(contactService)
-                .createContactRequest(any(ContactUSRequestDto.class), eq("user123"));
+		doNothing().when(contactService).createContactRequest(any(ContactUSRequestDto.class), eq("user123"));
 
-        mockMvc.perform(post("/api/v1/contact")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("Contact request submitted successfully"));
+		mockMvc.perform(post("/api/v1/contact").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isOk())
+				.andExpect(content().string("Contact request submitted successfully"));
 
-        verify(contactService)
-                .createContactRequest(any(ContactUSRequestDto.class), eq("user123"));
-    }
+		verify(contactService).createContactRequest(any(ContactUSRequestDto.class), eq("user123"));
+	}
 
-    // ❌ VALIDATION ERROR
-    @Test
-    @WithMockUser(username = "user123", roles = "USER")
-    public void createContact_validationError() throws Exception {
+	// ❌ VALIDATION ERROR
+	@Test
+	@WithMockUser(username = "user123", roles = "USER")
+	public void createContact_validationError() throws Exception {
 
-        ContactUSRequestDto dto =
-                new ContactUSRequestDto("", "");
+		ContactUSRequestDto dto = new ContactUSRequestDto("", "");
 
-        mockMvc.perform(post("/api/v1/contact")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/v1/contact").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 
-        verifyNoInteractions(contactService);
-    }
+		verifyNoInteractions(contactService);
+	}
 }
