@@ -2,7 +2,17 @@ pipeline {
     agent any
 
     environment {
-        DEV_JWT_SECRET = credentials('DEV_JWT_SECRET')
+        DEV_DB_PASSWORD   = credentials('DEV_DB_PASSWORD')
+        DEV_DB_URL        = credentials('DEV_DB_URL')
+        DEV_DB_USERNAME   = credentials('DEV_DB_USERNAME')
+        DEV_JWT_SECRET    = credentials('DEV_JWT_SECRET')
+        DEV_MAIL_PASSWORD = credentials('DEV_MAIL_PASSWORD')
+        DEV_MAIL_USERNAME = credentials('DEV_MAIL_USERNAME')
+        DEV_RAPID_API_KEY = credentials('DEV_RAPID_API_KEY')
+        DEV_TWILIO_PHONE  = credentials('DEV_TWILIO_PHONE')
+        DEV_TWILIO_SID    = credentials('DEV_TWILIO_SID')
+        DEV_TWILIO_TOKEN  = credentials('DEV_TWILIO_TOKEN')
+        FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
     }
 
     stages {
