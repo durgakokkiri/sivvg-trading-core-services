@@ -18,10 +18,7 @@ pipeline {
         stage('Run') {
             steps {
                 dir('sivvg-trading-core-services') {
-                    bat '''
-                    set DEV_JWT_SECRET=%DEV_JWT_SECRET%
-                    for %i in (target\\*.jar) do (java -jar %i)
-                    '''
+                    bat 'java -jar target\\sivvg-trading-core-services-0.0.1-SNAPSHOT.jar'
                 }
             }
         }
