@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DEV_JWT_SECRET = credentials('DEV_JWT_SECRET')
+    }
+
     stages {
 
         stage('Build') {
@@ -15,9 +19,8 @@ pipeline {
             steps {
                 dir('sivvg-trading-core-services') {
                     bat '''
-                    for %%i in (target\\*.jar) do (
-                        java -jar %%i
-                    )
+                    set DEV_JWT_SECRET=%DEV_JWT_SECRET%
+                    for %i in (target\\*.jar) do (java -jar %i)
                     '''
                 }
             }
