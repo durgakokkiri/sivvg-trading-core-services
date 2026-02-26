@@ -2,9 +2,10 @@ package com.sivvg.tradingservices;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.sivvg.tradingservices.configuration.FirebaseConfig;
 import com.sivvg.tradingservices.configuration.TwilioConfig;
 import com.sivvg.tradingservices.service.EmailService;
 import com.sivvg.tradingservices.service.SmsService;
@@ -14,17 +15,20 @@ import com.sivvg.tradingservices.serviceImpl.YahooFinanceClientServiceImpl;
 @ActiveProfiles("test")
 public class SivvgTradingCoreServicesApplicationTests {
 
-	@MockBean
+	@MockitoBean
 	private TwilioConfig twilioConfig;
 
-	@MockBean
+	@MockitoBean
 	private EmailService emailService;
 
-	@MockBean
+	@MockitoBean
 	private SmsService smsService;
 
-	@MockBean
+	@MockitoBean
 	private YahooFinanceClientServiceImpl yahooFinanceClientService;
+	
+	@MockitoBean
+	private FirebaseConfig firebaseConfig;
 
 	@Test
 	public void contextLoads() {

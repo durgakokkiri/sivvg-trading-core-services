@@ -1,6 +1,6 @@
 <configuration scan="true">
 
-    <property name="LOG_HOME" value="C:\Users\Satya\Documents\log"/>
+    <property name="LOG_HOME" value="C:\Users\kokki\log"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
