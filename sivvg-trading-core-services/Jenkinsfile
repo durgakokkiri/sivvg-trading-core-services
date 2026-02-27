@@ -1,21 +1,47 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Select Environment')
+    }
+
     environment {
-        DEV_DB_PASSWORD   = credentials('DEV_DB_PASSWORD')
-        DEV_DB_URL        = credentials('DEV_DB_URL')
-        DEV_DB_USERNAME   = credentials('DEV_DB_USERNAME')
-        DEV_JWT_SECRET    = credentials('DEV_JWT_SECRET')
-        DEV_MAIL_PASSWORD = credentials('DEV_MAIL_PASSWORD')
-        DEV_MAIL_USERNAME = credentials('DEV_MAIL_USERNAME')
-        DEV_RAPID_API_KEY = credentials('DEV_RAPID_API_KEY')
-        DEV_TWILIO_PHONE  = credentials('DEV_TWILIO_PHONE')
-        DEV_TWILIO_SID    = credentials('DEV_TWILIO_SID')
-        DEV_TWILIO_TOKEN  = credentials('DEV_TWILIO_TOKEN')
-        FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
+        SPRING_PROFILES_ACTIVE = "${params.ENV}"
     }
 
     stages {
+
+        stage('Set Environment Variables') {
+            steps {
+                script {
+                    if (params.ENV == 'dev') {
+                        env.DB_URL        = credentials('DEV_DB_URL')
+                        env.DB_USERNAME   = credentials('DEV_DB_USERNAME')
+                        env.DB_PASSWORD   = credentials('DEV_DB_PASSWORD')
+                        env.JWT_SECRET    = credentials('DEV_JWT_SECRET')
+                        env.MAIL_USERNAME = credentials('DEV_MAIL_USERNAME')
+                        env.MAIL_PASSWORD = credentials('DEV_MAIL_PASSWORD')
+                        env.RAPID_API_KEY = credentials('DEV_RAPID_API_KEY')
+                        env.TWILIO_PHONE  = credentials('DEV_TWILIO_PHONE')
+                        env.TWILIO_SID    = credentials('DEV_TWILIO_SID')
+                        env.TWILIO_TOKEN  = credentials('DEV_TWILIO_TOKEN')
+                    } else {
+                        env.DB_URL        = credentials('PROD_DB_URL')
+                        env.DB_USERNAME   = credentials('PROD_DB_USERNAME')
+                        env.DB_PASSWORD   = credentials('PROD_DB_PASSWORD')
+                        env.JWT_SECRET    = credentials('PROD_JWT_SECRET')
+                        env.MAIL_USERNAME = credentials('PROD_MAIL_USERNAME')
+                        env.MAIL_PASSWORD = credentials('PROD_MAIL_PASSWORD')
+                        env.RAPID_API_KEY = credentials('PROD_RAPID_API_KEY')
+                        env.TWILIO_PHONE  = credentials('PROD_TWILIO_PHONE')
+                        env.TWILIO_SID    = credentials('PROD_TWILIO_SID')
+                        env.TWILIO_TOKEN  = credentials('PROD_TWILIO_TOKEN')
+                    }
+
+                    env.FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
+                }
+            }
+        }
 
         stage('Build') {
             steps {
