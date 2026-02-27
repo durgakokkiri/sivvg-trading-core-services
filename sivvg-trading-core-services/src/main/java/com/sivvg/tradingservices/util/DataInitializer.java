@@ -16,7 +16,7 @@ import com.sivvg.tradingservices.repository.StatusRepository;
 import com.sivvg.tradingservices.repository.UserRepository;
 
 @Component
-//@Profile("init")
+
 public class DataInitializer implements CommandLineRunner {
 
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);

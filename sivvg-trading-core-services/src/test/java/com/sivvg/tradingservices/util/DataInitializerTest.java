@@ -29,7 +29,7 @@ import com.sivvg.tradingservices.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 //@ActiveProfiles("init") // make sure DataInitializer runs
 @Component
-//@Profile("!test")
+
 public class DataInitializerTest {
 
 	@Mock
