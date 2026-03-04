@@ -14,7 +14,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'production-setup', url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
+                git branch: 'production-setup',
+                url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
             }
         }
 
@@ -69,8 +70,15 @@ pipeline {
 
         stage('Docker Login') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    bat 'echo %PASSWORD% | docker login -u %USERNAME% --password-stdin'
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-creds',
+                    usernameVariable: 'USERNAME',
+                    passwordVariable: 'PASSWORD'
+                )]) {
+                    bat '''
+                    docker logout
+                    echo %PASSWORD% | docker login -u %USERNAME% --password-stdin
+                    '''
                 }
             }
         }
