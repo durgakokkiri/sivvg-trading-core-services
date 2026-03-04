@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: sivvg-db
+    environment:
+      POSTGRES_DB: ${DEV_DB_NAME}
+      POSTGRES_USER: ${DEV_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    image: durgakokkiri/sivvg-app:latest
+    container_name: sivvg-app
+    depends_on:
+      - postgres
+    environment:
+
+      SPRING_PROFILES_ACTIVE: dev
+
+      DEV_DB_URL: ${DEV_DB_URL}
+      DEV_DB_USERNAME: ${DEV_DB_USERNAME}
+      DEV_DB_PASSWORD: ${DEV_DB_PASSWORD}
+
+      DEV_JWT_SECRET: ${DEV_JWT_SECRET}
+
+      DEV_MAIL_USERNAME: ${DEV_MAIL_USERNAME}
+      DEV_MAIL_PASSWORD: ${DEV_MAIL_PASSWORD}
+
+      DEV_RAPID_API_KEY: ${DEV_RAPID_API_KEY}
+
+      DEV_TWILIO_PHONE: ${DEV_TWILIO_PHONE}
+      DEV_TWILIO_SID: ${DEV_TWILIO_SID}
+      DEV_TWILIO_TOKEN: ${DEV_TWILIO_TOKEN}
+
+      FIREBASE_CONFIG_PATH: ${FIREBASE_CONFIG_PATH}
+
+    volumes:
+      - ./firebase-service-account.json:/app/firebase-service-account.json
+
+    ports:
+      - "9090:8081"
+
+volumes:
+  postgres-data:
