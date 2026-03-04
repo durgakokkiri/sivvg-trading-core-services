@@ -12,6 +12,12 @@ pipeline {
 
     stages {
 
+        stage('Checkout Code') {
+            steps {
+                git branch: 'production-setup', url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
+            }
+        }
+
         stage('Set Environment Variables') {
             steps {
                 script {
@@ -55,7 +61,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('sivvg-trading-core-services') {
-                    bat 'docker build -t %DOCKER_IMAGE%:latest .'
+                    bat "docker build -t %DOCKER_IMAGE%:%BUILD_NUMBER% ."
+                    bat "docker tag %DOCKER_IMAGE%:%BUILD_NUMBER% %DOCKER_IMAGE%:latest"
                 }
             }
         }
@@ -70,7 +77,17 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                bat 'docker push %DOCKER_IMAGE%:latest'
+                bat "docker push %DOCKER_IMAGE%:%BUILD_NUMBER%"
+                bat "docker push %DOCKER_IMAGE%:latest"
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                dir('sivvg-trading-core-services') {
+                    bat 'docker-compose down'
+                    bat 'docker-compose up -d'
+                }
             }
         }
 
