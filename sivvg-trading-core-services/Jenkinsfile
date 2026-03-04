@@ -68,20 +68,16 @@ pipeline {
             }
         }
 
-        stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-creds',
-                    usernameVariable: 'USERNAME',
-                    passwordVariable: 'PASSWORD'
-                )]) {
-                    bat '''
-                    docker logout
-                    echo %PASSWORD% | docker login -u %USERNAME% --password-stdin
-                    '''
-                }
-            }
+       stage('Docker Login') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            bat '''
+            docker logout
+            docker login -u %USERNAME% -p %PASSWORD%
+            '''
         }
+    }
+}
 
         stage('Push Docker Image') {
             steps {
