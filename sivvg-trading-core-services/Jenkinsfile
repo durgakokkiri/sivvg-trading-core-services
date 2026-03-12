@@ -17,19 +17,22 @@ pipeline {
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                git branch: 'production-setup',
+                url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
+            }
+        }
+
         stage('Build') {
             steps {
-                dir('sivvg-trading-core-services') {
-                    bat 'mvnw.cmd clean install -DskipTests'
-                }
+                bat 'mvnw.cmd clean install -DskipTests'
             }
         }
 
         stage('Run') {
             steps {
-                dir('sivvg-trading-core-services') {
-                    bat 'java -jar target\\sivvg-trading-core-services-0.0.1-SNAPSHOT.jar'
-                }
+                bat 'java -jar target\\sivvg-trading-core-services-0.0.1-SNAPSHOT.jar'
             }
         }
     }
