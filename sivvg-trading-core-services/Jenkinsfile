@@ -15,14 +15,7 @@ pipeline {
         FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
     }
 
-    //stages {
-
-        //stage('Checkout') {
-           // steps {
-                //git branch: 'production-setup',
-               // url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
-           // }
-        //}
+   
         stages {
 
           stage('Checkout') {
