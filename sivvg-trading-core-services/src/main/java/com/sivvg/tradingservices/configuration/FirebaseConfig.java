@@ -1,11 +1,9 @@
 package com.sivvg.tradingservices.configuration;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.auth.oauth2.GoogleCredentials;
@@ -15,13 +13,15 @@ import com.google.firebase.FirebaseOptions;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.config.path}")
-    private String firebaseConfigPath;
-
     @PostConstruct
     public void init() {
-        try (FileInputStream serviceAccount =
-                     new FileInputStream(firebaseConfigPath)) {
+        try {
+            // 🔥 use separate method
+            InputStream serviceAccount = getServiceAccountStream();
+
+            if (serviceAccount == null) {
+                throw new RuntimeException("❌ Firebase JSON file not found in resources");
+            }
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -31,11 +31,16 @@ public class FirebaseConfig {
                 FirebaseApp.initializeApp(options);
             }
 
-            System.out.println("✅ Firebase initialized using: " + firebaseConfigPath);
+            System.out.println("✅ Firebase initialized successfully");
 
-        } catch (IOException e) {
-            throw new RuntimeException(
-                    "❌ Firebase initialization failed. Path: " + firebaseConfigPath, e);
+        } catch (Exception e) {
+            throw new RuntimeException("❌ Firebase initialization failed", e);
         }
+    }
+
+    // 🔥 VERY IMPORTANT (for testing)
+    protected InputStream getServiceAccountStream() {
+        return getClass().getClassLoader()
+                .getResourceAsStream("firebase-service-account.json");
     }
 }

@@ -3,24 +3,25 @@ package com.sivvg.tradingservices.configuration;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import java.io.InputStream;
 
-class FirebaseConfigTest {
+import org.junit.jupiter.api.Test;
+
+class FirebaseConfigFailureTest {
 
     @Test
     void initializeFirebase_fileNotFound() {
 
-        FirebaseConfig firebaseConfig = new FirebaseConfig();
+        FirebaseConfig config = new FirebaseConfig() {
 
-        // Set invalid path
-        ReflectionTestUtils.setField(firebaseConfig,
-                "firebaseConfigPath",
-                "invalid/path/firebase.json");
+            @Override
+            protected InputStream getServiceAccountStream() {
+                return null; // 🔥 simulate file missing
+            }
+        };
 
         RuntimeException exception =
-                assertThrows(RuntimeException.class,
-                        firebaseConfig::init);
+                assertThrows(RuntimeException.class, config::init);
 
         assertTrue(exception.getMessage()
                 .contains("Firebase initialization failed"));
