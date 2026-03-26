@@ -2,7 +2,7 @@ package com.sivvg.tradingservices.configuration;
 
 import java.io.InputStream;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -16,11 +16,15 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-            // 🔥 use separate method
-            InputStream serviceAccount = getServiceAccountStream();
+            // 🔹 Load JSON from classpath (resources folder)
+            InputStream serviceAccount = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("firebase-service-account.json");
 
             if (serviceAccount == null) {
-                throw new RuntimeException("❌ Firebase JSON file not found in resources");
+                throw new RuntimeException(
+                    "❌ Firebase service account JSON not found! " +
+                    "Make sure 'firebase-service-account.json' is in src/main/resources/");
             }
 
             FirebaseOptions options = FirebaseOptions.builder()
@@ -34,13 +38,7 @@ public class FirebaseConfig {
             System.out.println("✅ Firebase initialized successfully");
 
         } catch (Exception e) {
-            throw new RuntimeException("❌ Firebase initialization failed", e);
+            throw new RuntimeException("❌ Firebase initialization failed: " + e.getMessage(), e);
         }
-    }
-
-    // 🔥 VERY IMPORTANT (for testing)
-    protected InputStream getServiceAccountStream() {
-        return getClass().getClassLoader()
-                .getResourceAsStream("firebase-service-account.json");
     }
 }

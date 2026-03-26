@@ -15,14 +15,28 @@ pipeline {
         FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
     }
 
-    stages {
+    //stages {
 
-        stage('Checkout') {
+        //stage('Checkout') {
+           // steps {
+                //git branch: 'production-setup',
+               // url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
+           // }
+        //}
+        stages {
+
+          stage('Checkout') {
             steps {
-                git branch: 'production-setup',
-                url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
+                // Git tool name 'Default' must match Jenkins Global Tool Configuration
+                git(
+                    url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git',
+                    branch: 'production-setup',
+                    tool: 'Default'  // This fixes the Git warning
+                )
             }
         }
+
+
 
         stage('Build') {
             steps {
