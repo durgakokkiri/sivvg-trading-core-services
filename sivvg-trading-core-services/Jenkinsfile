@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+        nodejs 'NodeJS'
+    }
+
     environment {
         DEV_DB_PASSWORD   = credentials('DEV_DB_PASSWORD')
         DEV_DB_URL        = credentials('DEV_DB_URL')
@@ -15,29 +20,62 @@ pipeline {
         FIREBASE_CONFIG_PATH = credentials('FIREBASE_CONFIG_PATH')
     }
 
-   
-        stage('Checkout') {
-    steps {
-        git branch: 'production-setup',
-            url: 'https://github.com/durgakokkiri/sivvg-trading-core-services.git'
-    }
-}
+    stages {
 
-
-
-        stage('Build') {
+        stage('Clone Backend') {
             steps {
-                dir('sivvg-trading-core-services') {
+                dir('backend') {
+                    git branch: 'main',
+                        url: 'https://github.com/satya323k-design/SIVVGTRADINGAPPBACKEND.git'
+                }
+            }
+        }
+
+        stage('Clone Frontend') {
+            steps {
+                dir('frontend') {
+                    git branch: 'main',
+                        url: 'https://github.com/satya323k-design/SivvgApp.git'
+                }
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
                     bat 'mvnw.cmd clean install -DskipTests'
                 }
             }
         }
 
-        stage('Run') {
+        stage('Test Backend') {
             steps {
-                dir('sivvg-trading-core-services') {
-                    bat 'java -jar target\\sivvg-trading-core-services-0.0.1-SNAPSHOT.jar'
+                dir('backend') {
+                    bat 'mvnw.cmd test'
                 }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Run Backend') {
+            steps {
+                dir('backend') {
+                    bat 'java -jar target\\*.jar'
+                }
+            }
+        }
+
+        stage('Success') {
+            steps {
+                echo '✅ Fullstack Build + Test + Run Success'
             }
         }
     }
